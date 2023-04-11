@@ -1,4 +1,4 @@
-const Discord = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const moment = require('moment');
 moment.locale('es');
 
@@ -8,7 +8,7 @@ function generateTemporalTimer (toMs, message, remind) {
     if (toMs > 2147483647) return; // tenmporal fix | 24.85 días es el límite. todo: rework
 
     setTimeout(async () => {
-        let embed = new Discord.MessageEmbed()
+        let embed = new EmbedBuilder()
             .setColor(process.env.BOT_COLOR)
             .setAuthor({
                 name: `Recordatorio (${moment(remind.createdAt).fromNow()})`,
@@ -30,7 +30,7 @@ function generateTemporalTimer (toMs, message, remind) {
             embeds: [embed]
         });
     }, toMs);
-};
+}
 
 async function commandList (message) {
     const list = [];
@@ -61,10 +61,10 @@ async function commandList (message) {
         list.push(toPush);
     });
 
-    if (!reminds || list.length <= 0) return message.reply('no tienes ningún recordatorio!'); // todo: Embed
+    if (!reminds || list.length <= 0) return message.channel.send(`**${message.author.username}**, no tienes ningún recordatorio!`); // todo: Embed
 
     // Responder
-    let embed = new Discord.MessageEmbed()
+    let embed = new EmbedBuilder()
         .setColor(process.env.BOT_COLOR)
         .setAuthor({
             name: `Recordatorios | Lista de ${message.author.tag}`,
@@ -76,7 +76,7 @@ async function commandList (message) {
         .setDescription(list.join("\n"));
 
     return await message.channel.send({ embeds: [embed] });
-};
+}
 
 module.exports = {
 	name: 'remind',
@@ -85,9 +85,9 @@ module.exports = {
     usage: '1 (m, h, d, s) | [mensaje]',
 	async execute (message, args) {
         // Ejemplo de uso
-        let example = `Ejemplo de uso: ${process.env.BOT_PREFIX}${this.name} ${this.usage}`;
+        let example = `**${message.author.username}**, ejemplo de uso: ${process.env.BOT_PREFIX}${this.name} ${this.usage}`;
         // Si no hay args mostrar ejemplo
-        if (!args || args.length <= 0) return message.reply({
+        if (!args || args.length <= 0) return message.channel.send({
             content: example
         });
 
@@ -95,7 +95,7 @@ module.exports = {
         if (args[0].toLowerCase() === "list") return commandList(message);
 
         // Comprobar si el comando es válido
-        if (!args.join(' ').split('|')[0] || !args.join(' ').split('|')[1]) return message.reply({
+        if (!args.join(' ').split('|')[0] || !args.join(' ').split('|')[1]) return message.channel.send({
             content: example
         });
 
@@ -104,7 +104,7 @@ module.exports = {
         const getDate = msg[0].toString(); // 3d
         const getMessage = msg[1].toString().trim(); // trimming: " hello" => "hello"
 
-        if (!getMessage || getMessage.length <= 0) return message.reply({ content: example });
+        if (!getMessage || getMessage.length <= 0) return message.channel.send({ content: example });
 
         // Convertir a fecha
         const actualDate = moment();
@@ -120,7 +120,7 @@ module.exports = {
             let getYear = fullDate[2];
 
             // Si faltan dataos
-            if (!getDay || !getMonth || !getYear) return message.reply({ content: example });
+            if (!getDay || !getMonth || !getYear) return message.channel.send({ content: example });
 
             // Agregar fecha
             setDate = moment(`${getDay}-${getMonth}-${getYear}`, 'DD/MM/YY');
@@ -129,26 +129,26 @@ module.exports = {
             if (getDate.includes('m')) {
                 getDateInfo = parseInt(getDate.split('m')[0]);
                 setDate.add(getDateInfo, 'minutes');
-            };
+            }
             // h
             if (getDate.includes('h')) {
                 // moment(setDate).add(getDateInfo, 'hours'); // idea?
                 getDateInfo = parseInt(getDate.split('h')[0]);
                 setDate.add(getDateInfo, 'hours');
-            };
+            }
 
             // d
             if (getDate.includes('d')) {
                 getDateInfo = parseInt(getDate.split('d')[0]);
                 setDate.add(getDateInfo, 'days');
-            };
+            }
             // s
             if (getDate.includes('s')) {
                 getDateInfo = parseInt(getDate.split('s')[0]);
                 setDate.add(getDateInfo, 'weeks');
-            };
+            }
             // y?
-        };
+        }
 
         // Modelo
         const remind = new Remind({
@@ -166,7 +166,7 @@ module.exports = {
         await remind.save();
 
         // Responder
-        let embed = new Discord.MessageEmbed()
+        let embed = new EmbedBuilder()
             .setColor(process.env.BOT_COLOR)
             .setAuthor({
                 name: `Recordatorio para ${message.author.tag}`,
@@ -183,4 +183,4 @@ module.exports = {
         let toMs = moment(remind.date).valueOf() - moment().valueOf();
         generateTemporalTimer(toMs, message, remind);
 	}
-};
+}

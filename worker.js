@@ -1,4 +1,4 @@
-const Discord = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const moment = require('moment');
 moment.locale('es');
 
@@ -26,7 +26,7 @@ async function setTimers(reminds, bot) {
             let ping = `<@${rm.userID}>`;
             let avatar = await bot.users.fetch(rm.userID);
 
-            let embed = new Discord.MessageEmbed()
+            let embed = new EmbedBuilder()
                 .setColor(process.env.BOT_COLOR)
                 .setAuthor({
                     name: `Recordatorio (${moment(rm.createdAt).fromNow()})`,
@@ -49,7 +49,7 @@ async function setTimers(reminds, bot) {
             });
         }, toMs);
     });
-};
+}
 
 module.exports = async (bot) => {
     // Obtener recordatorios
@@ -58,4 +58,4 @@ module.exports = async (bot) => {
     });
 
     await setTimers(reminds, bot);
-};
+}
