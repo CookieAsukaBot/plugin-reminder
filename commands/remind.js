@@ -61,13 +61,13 @@ async function commandList (message) {
         list.push(toPush);
     });
 
-    if (!reminds || list.length <= 0) return message.channel.send(`**${message.author.username}**, no tienes ningún recordatorio!`); // todo: Embed
+    if (!reminds || list.length <= 0) return message.channel.send(`**${message.author.globalName}**, no tienes ningún recordatorio!`); // todo: Embed
 
     // Responder
     let embed = new EmbedBuilder()
         .setColor(process.env.BOT_COLOR)
         .setAuthor({
-            name: `Recordatorios | Lista de ${message.author.tag}`,
+            name: `Recordatorios | Lista de ${message.author.username}`,
             iconURL: message.author.displayAvatarURL()
         })
         .setFooter({
@@ -85,7 +85,7 @@ module.exports = {
     usage: '1 (m, h, d, s) | [mensaje]',
 	async execute (message, args) {
         // Ejemplo de uso
-        let example = `**${message.author.username}**, ejemplo de uso: ${process.env.BOT_PREFIX}${this.name} ${this.usage}`;
+        let example = `**${message.author.globalName}**, ejemplo de uso: ${process.env.BOT_PREFIX}${this.name} ${this.usage}`;
         // Si no hay args mostrar ejemplo
         if (!args || args.length <= 0) return message.channel.send({
             content: example
@@ -169,7 +169,7 @@ module.exports = {
         let embed = new EmbedBuilder()
             .setColor(process.env.BOT_COLOR)
             .setAuthor({
-                name: `Recordatorio para ${message.author.tag}`,
+                name: `Recordatorio para ${message.author.username}`,
                 iconURL: message.author.displayAvatarURL()
             })
             .setDescription(`💌 Se guardó tu recordatorio; te lo recordaré **${setDate.fromNow()}**.`);

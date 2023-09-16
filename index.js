@@ -2,7 +2,7 @@ const path = require('node:path');
 
 module.exports = {
     name: 'Reminders',
-    version: '1.1.0',
+    version: '1.1.1',
     cookiebot: '1.4.0',
     description: 'Crear recordatorios.',
     dependencies: [],
